@@ -8,16 +8,30 @@ module.exports = class EmailService {
 
     static deleteEmailHostedFiles(attachmentFileNamesList) {
         for (let i = 0; i < attachmentFileNamesList.length; i++) {
+            if (attachmentFileNamesList[i] === '.empty') {
+                continue;
+            }
             fs.unlink(`${emailAttachmentDirectoryPath}/${attachmentFileNamesList[i]}`, deleteError => {
                 if (deleteError) {
-                    return console.log(error);
+                    return console.log(deleteError);
                 }
             });
         }
     }
 
     static constructEmailOptions(emailData, attachmentFileNamesList) {
-        const maiImages = attachmentFileNamesList.map(file => `<img src="cid:${file}">`);
+        let maiImages = [];
+        const attachmentObjList = [];
+        for (let i = 0; i < attachmentFileNamesList.length; i++) {
+            if (attachmentFileNamesList[i] !== '.empty') {
+                maiImages.push(`<img src="cid:${attachmentFileNamesList[i]}">`);
+                attachmentObjList.push({
+                    fileName: attachmentFileNamesList[i],
+                    path: `${emailAttachmentDirectoryPath}/${attachmentFileNamesList[i]}`,
+                    cid: attachmentFileNamesList[i]
+                });
+            }
+        }
         const html =
             `<html>
                 <body>
@@ -26,14 +40,6 @@ module.exports = class EmailService {
                      ${maiImages} 
                 </body>
             </html>`;
-
-        const attachmentObjList = attachmentFileNamesList.map(file => {
-            return {
-                fileName: file,
-                path: `${emailAttachmentDirectoryPath}/${file}`,
-                cid: file
-            };
-        });
 
         const recipientsList = emailData.recipients.map(recipient => `<${recipient}>`).toString();
         const mailOptions = {
@@ -71,12 +77,12 @@ module.exports = class EmailService {
 
             transporter.sendMail(emailOptions, function (error, info) {
                 if (error) {
-                    return console.log(error);
+                    return console.log('Error sending mail : ', error);
                 }
 
                 EmailService.deleteEmailHostedFiles(attachmentFileNamesList);
 
-                console.log('Message sent: ' + info.response);
+                console.log('-------- Message sent ----------  ' + info.response);
             });
 
         });
