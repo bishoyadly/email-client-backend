@@ -23,41 +23,7 @@ module.exports = class EmailController {
                 .send('');
         });
     }
-    //
-    // static getImage(request, response) {
-    //     fs.readFile(path.join(emailAttachmentDirectoryPath, request.params.imageName), (error, file) => {
-    //         if (error) {
-    //             response
-    //                 .status(404)
-    //                 .send('');
-    //         } else if (file) {
-    //             response
-    //                 .status(200)
-    //                 .set('Content-Type', 'image')
-    //                 .send(file);
-    //         } else {
-    //             response
-    //                 .status(404)
-    //                 .send('');
-    //         }
-    //     });
-    // }
-    //
-    // static getEmailAttachment(request, response) {
-    //     const html =
-    //         `<html>
-    //             <body>
-    //                 <h1> Attachment Hosting </h1>
-    //                 <img src="http://localhost:8080/api/v1/images/webpack.png">
-    //                  <img src="http://localhost:8080/api/v1/images/christmas.gif">
-    //             </body>
-    //         </html>`;
-    //     response
-    //         .status(200)
-    //         .set('Content-Type', 'text/html')
-    //         .send(html)
-    // }
-    //
+
     static sendEmail(request, response) {
         const body = request.body;
         const emailData = {
